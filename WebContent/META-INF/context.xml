@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource maxWait="-1" 
+	          maxIdle="20" 
+	          maxActive="10" 
+	          username="PRJA" 
+	          password="PRJA"
+			  url="jdbc:oracle:thin:@127.0.0.1:1521:orcl"
+			  driverClassName="oracle.jdbc.OracleDriver" 
+			  type="javax.sql.DataSource"
+			  auth="Container" 
+			  name="jdbc/oracle" />
+	<ResourceLink global="jdbc/oracle" name="jdbc/oracle" type="javax.sql.DataSource"/>
+</Context>
