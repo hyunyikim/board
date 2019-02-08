@@ -60,7 +60,14 @@ tr element {
 				<c:forEach var="dto" items="${boardList}">
 					<tr>
 						<td>${dto.b_num}</td>
-						<td><a href="boardDetail.do?curPage=${pagingDto.curPage}&b_num=${dto.b_num}" class="a_boardDetail" id="${dto.b_num }">${dto.b_title}</a></td>
+						<td>
+							<c:if test="${dto.b_dept ne 0}">
+								<c:forEach var="i" begin="1" end="${dto.b_dept}" step="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
+								<%-- <img src="<%= request.getContextPath() %>/img/icon_reply.png"/> --%>
+								ㄴ
+							</c:if>
+							<a href="boardDetail.do?curPage=${pagingDto.curPage}&b_num=${dto.b_num}" class="a_boardDetail" id="${dto.b_num }">${dto.b_title}</a>
+						</td>
 						<td>${dto.b_writer}</td>
 						<td>${dto.b_date}</td>
 						<td>${dto.b_hit}</td>

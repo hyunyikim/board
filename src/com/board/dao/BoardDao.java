@@ -54,7 +54,6 @@ public class BoardDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			
 			rs.close();	
 			pstmt.close();
 			conn.close();
@@ -202,9 +201,6 @@ public class BoardDao {
 			pstmt.setInt(1, b_grp);
 			pstmt.setInt(2, b_seq);
 			result = pstmt.executeUpdate();
-			
-			System.out.println("updateSeq result : " + result);
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
