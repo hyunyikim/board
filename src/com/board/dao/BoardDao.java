@@ -31,8 +31,8 @@ public class BoardDao {
 		ArrayList<BoardDto> boardList = new ArrayList<BoardDto>();
 		try {
 			String sql = "select * from (select rownum as rnum, A.* from "
-					+ "(select * from board order by b_num desc) A where rownum <=?) "
-					+ "where rnum > ?";
+					+ "(select * from board order by b_grp desc, b_seq asc) A where rownum <=?) "
+					+ "where rnum > ? ";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, endIndex);
 			pstmt.setInt(2, startIndex);
@@ -54,6 +54,7 @@ public class BoardDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			
 			rs.close();	
 			pstmt.close();
 			conn.close();
@@ -191,18 +192,18 @@ public class BoardDao {
 		return max_seq;
 	}
 	
-	public int updateSeq(BoardDto dto) throws SQLException {
+	public int updateSeq(int b_grp, int b_seq) throws SQLException {
 		conn = datasource.getConnection();
 		int result = 0;
 		
 		try {
 			String sql = "update board set b_seq = b_seq + 1 where b_grp = ? and b_seq >= ?";
-			pstmt.setInt(1, dto.getB_grp());
-			pstmt.setInt(2, dto.getB_seq());
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, b_grp);
+			pstmt.setInt(2, b_seq);
 			result = pstmt.executeUpdate();
 			
 			System.out.println("updateSeq result : " + result);
-			
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -227,11 +228,6 @@ public class BoardDao {
 			pstmt.setInt(5, dto.getB_dept());
 			pstmt.setInt(6, dto.getB_seq());
 			result = pstmt.executeUpdate();
-			
-			
-			System.out.println("reply insert result : " + result);
-			
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -23,8 +23,17 @@ public class DetailService implements Action {
 			BoardDto dto = dao.boardDetail(b_num);
 			request.setAttribute("dto", dto);
 			
-			int curPage = Integer.parseInt(request.getParameter("curPage"));
+			// 새로 쓴 글인 경우 처음 화면으로 보여줌
+			int curPage = 0;
+			String str_curPage = (String)request.getParameter("curPage");
+			
+			if(str_curPage == null || str_curPage.equals("")) {
+				curPage = 1;
+			} else {
+				curPage = Integer.parseInt(str_curPage);
+			}
 			request.setAttribute("curPage", curPage);
+			
 			
 			// 댓글 목록 가져오기(만약 댓글이 null 일때도 처리)
 			

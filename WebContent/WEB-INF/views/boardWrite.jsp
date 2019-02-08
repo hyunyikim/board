@@ -63,7 +63,6 @@
       </tr>
     </table>
   </form>
-  <input type="hidden" id="curPage" value="${curPage }">
 </div>
 <script>
 	$('#btn_boardWrite').click(function(){
@@ -73,7 +72,7 @@
 	});
 	$('#btn_goBack').click(function(){
 		// 폼에 입력한 내용이 있다면 확인창 띄우기 
-		location.href="index.do?curPage=";
+		location.href="index.do";
 	});
 </script>
 </body>

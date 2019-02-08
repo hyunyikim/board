@@ -24,8 +24,6 @@ public class ReplyWriteService implements Action {
 			BoardDto origin_dto = dao.boardDetail(origin_num);					// 원글 정보
 			int minSeq = dao.selectMinSeq(origin_dto);							// 최소 시퀀스
 			
-			System.out.println("minSeq : " + minSeq);
-			
 			if(minSeq == 0) {	//	답글이 가장 마지막에 달릴 경우 
 				int maxSeq = dao.selectMaxSeq(origin_dto);
 				BoardDto dto = new BoardDto();
@@ -38,15 +36,10 @@ public class ReplyWriteService implements Action {
 				dao.replyWrite(dto);
 				
 			} else {			// 답글이 글 사이에 달릴 경우 
-				int b_grp = origin_dto.getB_grp();
-				System.out.println("updateseq b_grp:"+b_grp +", b_seq:"+minSeq);
+				int origin_grp = origin_dto.getB_grp();
+				dao.updateSeq(origin_grp, minSeq);		// 최소 시퀀스 이후 글들의 시퀀스 뒤로 1씩 미룸 
+				
 				BoardDto dto = new BoardDto();
-				
-				dto.setB_grp(origin_dto.getB_grp());
-				dto.setB_seq(minSeq);
-				dao.updateSeq(dto);		// 최소 시퀀스 이후 글들의 시퀀스 조정
-				
-				
 				dto.setB_title((String)request.getParameter("b_title"));
 				dto.setB_writer((String)request.getParameter("b_writer"));
 				dto.setB_content((String)request.getParameter("b_content"));
@@ -56,12 +49,22 @@ public class ReplyWriteService implements Action {
 				dao.replyWrite(dto);
 			}
 			
-			int currval = dao.boardSequence();	//	현재 글번호 조회
+			int currval = dao.boardSequence();			//	현재 글번호 조회
+			BoardDto newDto = dao.boardDetail(currval);	//	현재 글 조회
+			request.setAttribute("dto", newDto);
+			
+			int curPage = Integer.parseInt(request.getParameter("curPage"));
+			request.setAttribute("curPage", curPage);
+			
+			forward.setRedirect(false);
+			forward.setPath("/WEB-INF/views/boardDetail.jsp");
+			
+			/*
 			int curPage = Integer.parseInt(request.getParameter("curPage"));
 			String path = request.getContextPath() + "/boardDetail.do?b_num=" + currval + "&curPage=" + curPage;
 			forward.setRedirect(true);
 			forward.setPath(path);
-			
+			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -26,7 +26,11 @@ public class WriteService implements Action {
 			BoardDao dao = new BoardDao();
 			int result = dao.boardWrite(dto);
 			int currval = dao.boardSequence();	//	현재 글번호 조회 
-
+			
+			//int curPage = Integer.parseInt(request.getParameter("curPage"));
+			//System.out.println("service에서 찍은 현제 패이지 : " + curPage);
+			
+			
 			if(result > 0) {
 				String path = request.getContextPath() + "/boardDetail.do?b_num=" + currval;
 				forward.setRedirect(true);

@@ -70,7 +70,7 @@ public class FrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (url_command.equals("/replyWriteView.do")) {	//	답글 화면>>>>>>>>>>>>
+		} else if (url_command.equals("/replyWriteView.do")) {	//	답글 화면
 			try {
 				action = new ReplyWriteViewService();
 				forward = action.execute(request, response);
