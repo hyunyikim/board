@@ -12,6 +12,7 @@ import com.board.action.Action;
 import com.board.action.ActionForward;
 import com.board.service.DeleteService;
 import com.board.service.DetailService;
+import com.board.service.DownloadService;
 import com.board.service.ListService;
 import com.board.service.ReplyWriteService;
 import com.board.service.ReplyWriteViewService;
@@ -66,6 +67,13 @@ public class FrontController extends HttpServlet {
 		} else if (url_command.equals("/boardDetail.do")) {		// 	글 상세보기 	(댓글 목록 처리하기, 댓글 null일때)	
 			try {
 				action = new DetailService();
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (url_command.equals("/fileDownload.do")) {		// 	첨부파일 다운로드	
+			try {
+				action = new DownloadService();
 				forward = action.execute(request, response);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -27,7 +27,7 @@
   #textarea_comment {
     height: 200px;
   }
-  #td_writer {
+  #td_writer, #td_file {
     height: 50px;
   }
   #td_writeBtn {
@@ -42,15 +42,19 @@
 <body>
 <div class="container">
   <h2>게시판 글 쓰기</h2>        
-  <form action="boardWrite.do" method="post" id="form_board">
+  <form action="boardWrite.do" method="post" enctype="multipart/form-data" id="form_board">
     <table id="table_board">
       <tr>
-        <td >글제목</td>
+        <td>글제목</td>
         <td><input class="form-control" type="text" name="b_title"></td>
       </tr>
       <tr>
-        <td >작성자</td>
+        <td>작성자</td>
         <td id="td_writer" ><input class="form-control" type="text" name="b_writer"></td>
+      </tr>
+      <tr>
+        <td>파일</td>
+        <td id="td_file" ><input class="form-control" type="file" name="b_file"></td>
       </tr>
       <tr>
         <td id="td_content" colspan="2"><textarea name="b_content" id="textarea_comment" class="form-control" placeholder="글을 작성하세요."></textarea></td>

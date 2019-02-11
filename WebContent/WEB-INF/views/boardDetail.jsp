@@ -61,6 +61,9 @@
   	<span class="span_board">작성일&nbsp;&nbsp;${dto.b_date }&nbsp;&nbsp;|</span>
   	<span class="span_board">조회수&nbsp;&nbsp;${dto.b_hit }</span>
   </div>
+  <div class="div_boardDetail">
+  	<span class="span_board">첨부파일&nbsp;&nbsp;<a href="fileDownload.do?b_file=${dto.b_file }">${dto.b_file }</a>&nbsp;&nbsp;</span>
+  </div>
   <hr>
   <div id="div_content">
   	${dto.b_content }

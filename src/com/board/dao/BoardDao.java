@@ -23,7 +23,7 @@ public class BoardDao {
 	
 	public BoardDao() throws NamingException {
 		Context context = new InitialContext(); 
-		datasource = (DataSource) context.lookup("java:comp/env/jdbc/oracle");
+		datasource = (DataSource) context.lookup("java:comp/env/PRJA");
 	}
 
 	public ArrayList<BoardDto> getBoardList(int startIndex, int endIndex) throws SQLException {
@@ -130,12 +130,13 @@ public class BoardDao {
 		conn = datasource.getConnection();
 		int result = 0;
 		try {
-			String sql = "insert into board (b_num, b_title, b_content, b_writer, b_date, b_hit, b_grp, b_dept, b_seq) "
-					+ "values (seq_bnum.nextval, ?, ?, ?, sysdate, 0, seq_bnum.currval, 0, 0)";
+			String sql = "insert into board (b_num, b_title, b_content, b_writer, b_file, b_date, b_hit, b_grp, b_dept, b_seq) "
+					+ "values (seq_bnum.nextval, ?, ?, ?, ?, sysdate, 0, seq_bnum.currval, 0, 0)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getB_title());
 			pstmt.setString(2, dto.getB_content());
 			pstmt.setString(3, dto.getB_writer());
+			pstmt.setString(4, dto.getB_file());
 			result = pstmt.executeUpdate();
 		} catch(Exception e) {
 			e.printStackTrace();
