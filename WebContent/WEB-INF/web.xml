@@ -17,12 +17,5 @@
     <servlet-name>FrontController</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <servlet-name>AjaxController</servlet-name>
-    <servlet-class>com.board.controller.AjaxController</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AjaxController</servlet-name>
-    <url-pattern>*.ajax</url-pattern>
-  </servlet-mapping>
+  
 </web-app>

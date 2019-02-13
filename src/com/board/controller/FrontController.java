@@ -13,6 +13,7 @@ import com.board.action.ActionForward;
 import com.board.service.DeleteService;
 import com.board.service.DetailService;
 import com.board.service.DownloadService;
+import com.board.service.IndexService;
 import com.board.service.ListService;
 import com.board.service.ReplyWriteService;
 import com.board.service.ReplyWriteViewService;
@@ -48,9 +49,17 @@ public class FrontController extends HttpServlet {
 		
 		if (url_command.equals("/") || url_command.equals("/index.do")) {	//	게시글 목록
 			try {
+				forward = new ActionForward();
+				forward.setRedirect(false);
+				forward.setPath("WEB-INF/views/index.jsp");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (url_command.equals("/list.ajax")) {	//	게시글 목록
+			try {
 				action = new ListService();
 				forward = action.execute(request, response);
-			} catch (Exception e) {
+			} catch (Exception e) {	
 				e.printStackTrace();
 			}
 		} else if (url_command.equals("/boardWriteView.do")) {	//	글쓰기 화면

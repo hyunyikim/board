@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -12,6 +13,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.board.dto.BoardDto;
+import com.board.dto.PagingDto;
 
 public class BoardDao {
 
@@ -26,16 +28,34 @@ public class BoardDao {
 		datasource = (DataSource) context.lookup("java:comp/env/PRJA");
 	}
 
-	public ArrayList<BoardDto> getBoardList(int startIndex, int endIndex) throws SQLException {
+	public ArrayList<BoardDto> getBoardList(PagingDto pagingDto, String subject, String keyword) throws SQLException {
 		conn = datasource.getConnection();
 		ArrayList<BoardDto> boardList = new ArrayList<BoardDto>();
+		
+		int startIndex = pagingDto.getStartIndex();
+		int endIndex = pagingDto.getEndIndex();
+		
+		String sql = "";
+		
 		try {
-			String sql = "select * from (select rownum as rnum, A.* from "
-					+ "(select * from board order by b_grp desc, b_seq asc) A where rownum <=?) "
-					+ "where rnum > ? ";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, endIndex);
-			pstmt.setInt(2, startIndex);
+			if(subject.equals("all")) {
+				sql = "select * from (select rownum as rnum, A.* from "
+						+ "(select * from board order by b_grp desc, b_seq asc) A where rownum <=?) "
+						+ "where rnum > ? ";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, endIndex);
+				pstmt.setInt(2, startIndex);
+			} else {
+				sql = "select * from (select rownum as rnum, A.* from "
+						+ "(select * from board where " + subject + " like ? order by b_grp desc, b_seq asc) A where rownum <=?) "
+						+ "where rnum > ? ";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, "%" + keyword + "%");
+				pstmt.setInt(2, endIndex);
+				pstmt.setInt(3, startIndex);
+				
+			}
+			
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				BoardDto dto = new BoardDto();
@@ -61,20 +81,31 @@ public class BoardDao {
 		return boardList;
 	}
 	
-	public int getListCount() throws SQLException {
+	public int getListCount(String subject, String keyword) throws SQLException {
 		conn = datasource.getConnection();
 		int listCount = 0;
+		String sql = "";
 		try {
-			String sql = "select count(*) as listCount from board";
-			pstmt = conn.prepareStatement(sql);
+			if(subject.equals("all")) {		// 전체검색 
+				sql = "select count(*) as listCount from board";
+				pstmt = conn.prepareStatement(sql);
+			} else {						// 조건검색 
+				sql = "select count(*) as listCount from board where " + subject + " like ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, "%" + keyword + "%");
+			} 
+			
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				listCount = rs.getInt("listCount");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+		} finally {
+			rs.close();	
+			pstmt.close();
+			conn.close();
 		}
-		
 		return listCount;
 	}
 	
@@ -293,5 +324,6 @@ public class BoardDao {
 		}
 		return result;
 	}
+
 
 }

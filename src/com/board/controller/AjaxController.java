@@ -54,6 +54,21 @@ public class AjaxController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else if (url_command.equals("/search.ajax")) {
+			try {
+				request.setCharacterEncoding("UTF-8");
+				response.setCharacterEncoding("UTF-8");
+				response.setContentType("text/html; charset=UTF-8");
+				
+				int b_num = Integer.parseInt(request.getParameter("b_num"));
+				
+				BoardDao dao = new BoardDao();
+				int result = dao.increaseHit(b_num);
+				out.print(result);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} 
 		
 		

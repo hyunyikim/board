@@ -36,14 +36,27 @@ tr element {
 
 #div_btn {
 	text-align: right;
+	margin: 15px 0px;
 }
 
 #div_pagenation {
 	text-align: center;
 }
+#search_subject {
+	width: 10%;
+    display: inline;
+}
+#search_keyword {
+	width: 30%;
+    display: inline;
+}
+#btn_search {
+    width: 100px;
+	margin-right: 20%;
+}
 </style>
 </head>
-<body>
+<body>	
 	<div class="container">
 		<h2>게시판</h2>
 		<table class="table table-hover">
@@ -56,78 +69,122 @@ tr element {
 					<th id="th_hit">조회수</th>
 				</tr>
 			</thead>
-			<tbody>
-				<c:forEach var="dto" items="${boardList}">
-					<tr>
-						<td>${dto.b_num}</td>
-						<td>
-							<c:if test="${dto.b_dept ne 0}">
-								<c:forEach var="i" begin="1" end="${dto.b_dept}" step="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
-								<%-- <img src="<%= request.getContextPath() %>/img/icon_reply.png"/> --%>
-								ㄴ
-							</c:if>
-							<a href="boardDetail.do?curPage=${pagingDto.curPage}&b_num=${dto.b_num}" class="a_boardDetail" id="${dto.b_num }">${dto.b_title}</a>
-						</td>
-						<td>${dto.b_writer}</td>
-						<td>${dto.b_date}</td>
-						<td>${dto.b_hit}</td>
-					</tr>
-				</c:forEach>
-			</tbody>
+			<tbody id="tbody"></tbody>
 		</table>
 		<div id="div_btn">
+			<select class="form-control" id="search_subject" name="search_subject">
+			  <option value="all">전체</option>
+			  <option value="b_title">제목</option>
+			  <option value="b_writer">글쓴이</option>
+			  <option value="b_content">글내용</option>
+			</select>
+			<input type="text" class="form-control" id="search_keyword" name="search_keyword">
+			<button id="btn_search" class="btn">검색</button>
 			<button id="btn_writeBoard" class="btn">새글 작성</button>
 		</div>
-		<div id="div_pagenation">
-			<c:if test="${pagingDto.curRange ne 1}">
-				<a href="#" onClick="fn_paging(1)">[처음]</a>
-			</c:if>
-			<c:if test="${pagingDto.curPage ne 1}">
-				<a href="#" onClick="fn_paging('${pagingDto.prevPage}')">[이전]</a>
-			</c:if>
-			<c:forEach var="pageNum" begin="${pagingDto.startPage}" end="${pagingDto.endPage }">
-				<c:choose>
-					<c:when test="${pageNum eq pagingDto.curPage }">
-						<b><U><a href="#" onClick="fn_paging('${pageNum}')">${pageNum}</a></U></b>
-					</c:when>
-					<c:otherwise>
-						<a href="#" onClick="fn_paging('${pageNum}')">${pageNum}</a>
-					</c:otherwise>
-				</c:choose>
-			</c:forEach>
-			<c:if test="${pagingDto.curPage ne pagingDto.pageCount}">
-				<a href="#" onClick="fn_paging('${pagingDto.nextPage}')">[다음]</a>
-			</c:if>
-			<c:if test="${pagingDto.curRange ne pagingDto.rangeCount && pagingDto.rangeCount > 0}">
-				<a href="#" onClick="fn_paging('${pagingDto.pageCount}')">[끝]</a>
-			</c:if>
-		</div>
-	</div>
+		
+		<div id="div_pagenation"></div>
+	</div> 
+	<input type="hidden" value="${pagingDto.curPage}" id="curPage">
+
 	<script>
-		$('.a_boardDetail').click(function(){ // 조회수 증가 
-			var b_num = $(this).attr("id");
-				$.ajax({
-					url:"<%=request.getContextPath()%>/increaseHit.ajax",
-					data:{
-						"b_num":b_num 
-					},
-					success:function(data){
-						console.log("data" + data);
-					},
-					error:function(error){
-						console.log("조회수 증가 : 에러 발생");
+		var pageData = {
+				"curPage":1,
+				"subject":"",	 
+				"keyword":""
+			};
+	
+		list();			 // 처음 글 목록 불러오기
+		
+		
+		// 비동기로 목록 불러오기 
+		function list(){
+			console.log("현재 페이지 : " + pageData.curPage + ", 주제 : " + pageData.subject + ", 키워드 : " + pageData.keyword);
+			// 태그 초기화 
+			$('#tbody').empty();
+			$('#div_pagenation').empty();
+			
+			$.ajax({
+				url:"<%=request.getContextPath()%>/list.ajax",
+				data:{
+					"curPage": pageData.curPage,
+					"subject": pageData.subject,
+					"keyword": pageData.keyword
+				},
+				success:function(data){
+					console.log("data : " + data);
+					
+					jsonData = JSON.parse(data);
+					var boardList = jsonData.boardList;
+					var pagingDto = jsonData.pagingDto;
+					
+					// 게시글 목록 
+					var html = "";
+					$.each(boardList, function(index, item){
+						var depth = parseInt(item.b_dept);
+						
+						html += "<tr><td>"+item.b_num+"</td><td>";
+						if(depth != 0) {
+							for(var i = 0; i < depth; i++) {
+								html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
+							}
+							html += "ㄴ";
+						}
+						html += '<a href="boardDetail.do" class="a_boardDetail" id="'+item.b_num+'">'+item.b_title+'</a>';
+						html += '</td><td>';	
+						html += item.b_writer + '</td><td>';
+						html += item.b_date +'</td><td>';
+						html += item.b_hit + '</td></tr>';
+					});
+					$('#tbody').append(html);
+					
+					// 페이징 처리 
+					var html2 = "";
+					if(pagingDto.curRange != 1) {
+						html2 += '<a href="#" onClick="fn_paging(1)">[처음]</a>&nbsp;';
 					}
-				});
-		});
+					if(pagingDto.curPage != 1) {
+						html2 += '<a href="#" onClick="fn_paging('+pagingDto.prevPage+')">[이전]</a>&nbsp;';
+					}
+					for(var i=pagingDto.startPage; i<=pagingDto.endPage; i++) {
+						if(i == pagingDto.curPage) {
+							html2 += '<b><U><a href="#" onClick="fn_paging('+i+')">'+i+'</a></U></b>&nbsp;';
+						} else {
+							html2 += '<a href="#" onClick="fn_paging('+i+')">'+i+'</a>&nbsp;';
+						}
+					}
+					if(pagingDto.curPage != pagingDto.pageCount) {
+						html2 += '<a href="#" onClick="fn_paging('+pagingDto.nextPage+')">[다음]</a>&nbsp;';
+					}
+					if(pagingDto.curRange != pagingDto.rangeCount && pagingDto.rangeCount > 0){
+						html2 += '<a href="#" onClick="fn_paging('+pagingDto.pageCount+')">[끝]</a>';
+					}
+					$('#div_pagenation').append(html2);
+				
+				},
+				error:function(error){
+					console.log("목록 불러오기 : 에러 발생");
+				}
+			});
+		}
+		
+		
+		function fn_paging(curPage){
+			pageData.curPage = curPage;
+			alert("pageData.curPage : " + pageData.curPage + ", curPage : " + curPage);
+			list();
+		}
 		
 		$('#btn_writeBoard').click(function() {
 			location.href = "boardWriteView.do";
 		});
 		
-		// 페이징 함수 
-		function fn_paging(curPage){
-			location.href = "${pageContext.request.contextPath}/index.do?curPage="+curPage;
-		}
+		
+		$('#btn_search').click(function() {
+			pageData.subject = $('#search_subject option:selected').val();	 
+			pageData.keyword = $('#search_keyword').val();
+			list();
+		});
 	</script>
 </body>
 </html>
