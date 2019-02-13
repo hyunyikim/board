@@ -323,7 +323,68 @@ public class BoardDao {
 			conn.close();
 		}
 		return result;
+	}	
+	
+	
+	public int signUp(String id, String password) throws SQLException {
+		conn = datasource.getConnection();
+		int result = 0;
+		try {
+			String sql = "insert into member (id, password) values(?, ?)";
+			conn = datasource.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
+			result = pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			pstmt.close();
+			conn.close();
+		}
+		return result;
+	}	
+	
+	public int checkId(String id) throws SQLException {
+		conn = datasource.getConnection();
+		int result = 0;
+		try {
+			String sql = "select * from member where id = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			rs.close();	
+			pstmt.close();
+			conn.close();
+		}
+		return result;
 	}
-
+	
+	public String signIn(String id) throws SQLException {
+		conn = datasource.getConnection();
+		String password = "";
+		try {
+			String sql = "select password from member where id = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				password = rs.getString("password");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			rs.close();
+			pstmt.close();
+			conn.close();
+		}
+		return password;
+	}	
 
 }

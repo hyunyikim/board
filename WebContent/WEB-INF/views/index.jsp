@@ -54,11 +54,23 @@ tr element {
     width: 100px;
 	margin-right: 20%;
 }
+#h2_subject {
+	display: inline-block;
+}
+#div_btnRight {
+	display: inline-block;
+	width: 1040px;
+	text-align: right;
+}
 </style>
 </head>
 <body>	
 	<div class="container">
-		<h2>게시판</h2>
+		<h2 id="h2_subject">게시판</h2>
+		<div id="div_btnRight">
+			<button id="btn_signIn" class="btn">로그인</button>
+			<button id="btn_signUp" class="btn">회원가입</button>
+		</div>
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -85,7 +97,7 @@ tr element {
 		
 		<div id="div_pagenation"></div>
 	</div> 
-	<input type="hidden" value="${pagingDto.curPage}" id="curPage">
+	<%-- <input type="hidden" value="${pagingDto.curPage}" id="curPage"> --%>
 
 	<script>
 		var pageData = {
@@ -93,9 +105,9 @@ tr element {
 				"subject":"",	 
 				"keyword":""
 			};
-	
-		list();			 // 처음 글 목록 불러오기
 		
+		// 처음 글 목록 불러오기
+		list();			
 		
 		// 비동기로 목록 불러오기 
 		function list(){
@@ -130,8 +142,8 @@ tr element {
 							}
 							html += "ㄴ";
 						}
-						html += '<a href="boardDetail.do" class="a_boardDetail" id="'+item.b_num+'">'+item.b_title+'</a>';
-						html += '</td><td>';	
+						html += '<a href="boardDetail.do?b_num='+item.b_num+'" class="a_boardDetail" id="'+item.b_num+'">'+item.b_title+'</a>';
+						html += '</td><td>';
 						html += item.b_writer + '</td><td>';
 						html += item.b_date +'</td><td>';
 						html += item.b_hit + '</td></tr>';
@@ -171,7 +183,6 @@ tr element {
 		
 		function fn_paging(curPage){
 			pageData.curPage = curPage;
-			alert("pageData.curPage : " + pageData.curPage + ", curPage : " + curPage);
 			list();
 		}
 		
@@ -184,6 +195,14 @@ tr element {
 			pageData.subject = $('#search_subject option:selected').val();	 
 			pageData.keyword = $('#search_keyword').val();
 			list();
+		});
+		
+		$('#btn_signUp').click(function(){
+			window.open("signUpView.do", "회원가입", 'menubar=no,status=no,scrollbars=no,resizable=no ,width=500,height=300,top=50,left=50');
+		});
+		
+		$('#btn_signIn').click(function(){
+			window.open("signInView.do", "로그인", 'menubar=no,status=no,scrollbars=no,resizable=no ,width=500,height=300,top=50,left=50');
 		});
 	</script>
 </body>

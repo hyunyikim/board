@@ -10,13 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.board.action.Action;
 import com.board.action.ActionForward;
+import com.board.service.CheckIdService;
 import com.board.service.DeleteService;
 import com.board.service.DetailService;
 import com.board.service.DownloadService;
-import com.board.service.IndexService;
 import com.board.service.ListService;
 import com.board.service.ReplyWriteService;
 import com.board.service.ReplyWriteViewService;
+import com.board.service.SignInService;
+import com.board.service.SignUpService;
 import com.board.service.UpdateService;
 import com.board.service.UpdateViewService;
 import com.board.service.WriteService;
@@ -118,6 +120,35 @@ public class FrontController extends HttpServlet {
 		} else if (url_command.equals("/boardDelete.do")) {		//	글 삭제 
 			try {
 				action = new DeleteService();
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (url_command.equals("/signUpView.do")) {	//	회원가입 화면
+			forward = new ActionForward();
+			forward.setRedirect(false);
+			forward.setPath("WEB-INF/views/signUp.jsp");
+		} else if (url_command.equals("/checkId.ajax")) {	// 아이디 중복확인 
+			try {
+				action = new CheckIdService();
+				forward = action.execute(request, response);
+			} catch (Exception e) {	
+				e.printStackTrace();
+			}
+		} else if (url_command.equals("/signInView.do")) {	//	로그인 화면
+			forward = new ActionForward();
+			forward.setRedirect(false);
+			forward.setPath("WEB-INF/views/signIn.jsp");
+		} else if (url_command.equals("/signUp.do")) {	//	회원가입
+			try {
+				action = new SignUpService();
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (url_command.equals("/signIn.ajax")) {	//	로그인
+			try {
+				action = new SignInService();
 				forward = action.execute(request, response);
 			} catch (Exception e) {
 				e.printStackTrace();
